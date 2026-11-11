@@ -49,7 +49,7 @@ Fonts are **Inter** (UI) and **Fira Code** (mono), loaded from Google Fonts in
 
 ## Already filled in from the CV
 
-Name, title, Tokyo location, Outlook address and LinkedIn URL; all five roles
+Name, title, Tokyo location and contact email; all five roles
 (Timee, IBM, Mercari, Money Forward, Sansan) with dates and achievements; education;
 the full technical stack; six projects derived from real production work; and four
 stat counters that each trace to a specific CV line — 12+ years, 45K+ platform users,
@@ -63,31 +63,37 @@ Resume button links to it.
    `src/sections/Contact.astro`. Until you do, submitting shows a setup notice rather than
    silently losing the message. Your email address is always shown as a fallback.
 
-2. **Add a photo.** `src/sections/Hero.astro` renders your initials in the avatar ring.
+2. **The CV still shows the old contact details.** The site now lists
+   `hayatootsuka.dev@gmail.com` and no LinkedIn, but `public/resume.pdf` is the original
+   PDF — it still carries the Outlook address and the LinkedIn URL, and it is downloadable
+   from the Resume button. Export a fresh PDF and overwrite `public/resume.pdf` so the two
+   agree.
+
+3. **Add a photo.** `src/sections/Hero.astro` renders your initials in the avatar ring.
    There is a commented-out `<img>` block right there — drop a square photo at
    `public/img/avatar.jpg` and swap it in. A real face measurably helps.
 
-3. **Confirm the GitHub link.** `site.socials.github` points at `del-bestdev`, which was
+4. **Confirm the GitHub link.** `site.socials.github` points at `del-bestdev`, which was
    not on the CV. Change or remove it if that is not the account you want employers to see.
 
-4. **Projects show "Private / under NDA".** That is accurate for enterprise work at Timee,
+5. **Projects show "Private / under NDA".** That is accurate for enterprise work at Timee,
    IBM and Mercari. If any of it is public, or you have side projects worth showing, set
    `repo` / `demo` on those entries and the links appear.
 
-5. **Re-read the project descriptions.** They are written from CV bullet points, so they
+6. **Re-read the project descriptions.** They are written from CV bullet points, so they
    describe outcomes rather than implementation detail. Make sure each one matches how you
    would describe your own contribution in an interview — you will be asked.
 
-6. **Testimonials are deliberately empty.** The `testimonials` array in `site.ts` is `[]`,
+7. **Testimonials are deliberately empty.** The `testimonials` array in `site.ts` is `[]`,
    so that section does not render at all. Paste in genuine quotes — a LinkedIn
    recommendation, or a line from a manager with their permission — and it appears by
    itself. Do not invent them: a fake quote attributed to a real-sounding person is a
    serious liability on a page you send to employers.
 
-7. **Set your domain.** Update `site` in `astro.config.mjs` so canonical URLs and
+8. **Set your domain.** Update `site` in `astro.config.mjs` so canonical URLs and
    structured data point at the right place.
 
-8. **Note the Timee end date.** The CV lists Timee as ending Oct 2026, so the site says
+9. **Note the Timee end date.** The CV lists Timee as ending Oct 2026, so the site says
    you are open to new roles. If you are still there, change `site.availability`.
 
 ---

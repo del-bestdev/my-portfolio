@@ -8,14 +8,16 @@ export const site = {
   initials: "HO",
   role: "Senior Full-Stack Engineer",
   tagline: "Python · Java · React · Applied AI",
-  email: "hayatootsuka.dev@outlook.com",
+  email: "hayatootsuka.dev@gmail.com",
   phone: "", // optional — leave "" to hide the phone row entirely
   location: "Tokyo, Japan · Open to remote",
   availability: "Open to senior & staff engineering roles",
   resumeUrl: "/resume.pdf",
   socials: {
     github: "https://github.com/del-bestdev",
-    linkedin: "https://www.linkedin.com/in/hayato-otsuka-6919a314b",
+    // Empty = hidden. Every social icon is filtered out when its URL is blank,
+    // so re-adding a link here is all it takes to bring the icon back.
+    linkedin: "",
     twitter: "",
   },
 };
