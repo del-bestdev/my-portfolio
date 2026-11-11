@@ -80,16 +80,16 @@ Resume button links to it.
 
 ## Before you publish — the checklist
 
-1. **Wire up the contact form.** It posts to [Formspree](https://formspree.io) so it works
-   on a static host with no backend. Create a free form, then replace `YOUR_FORM_ID` in
-   `src/sections/Contact.astro`. Until you do, submitting shows a setup notice rather than
-   silently losing the message. Your email address is always shown as a fallback.
+1. **Point the contact form somewhere.** Sign up at [Formspree](https://formspree.io)
+   (free), create a form aimed at your inbox, then set `PUBLIC_CONTACT_ENDPOINT` to the
+   URL it gives you — in Vercel under **Settings → Environment Variables**, or in a local
+   `.env` (see `.env.example`). Until you do, the form opens the visitor's mail client
+   with their message pre-filled, so nothing is lost either way.
 
-2. **The CV still shows the old contact details.** The site now lists
-   `hayatootsuka.dev@gmail.com` and no LinkedIn, but `public/resume.pdf` is the original
-   PDF — it still carries the Outlook address and the LinkedIn URL, and it is downloadable
-   from the Resume button. Export a fresh PDF and overwrite `public/resume.pdf` so the two
-   agree.
+2. **Keep the CV in sync.** `public/resume.pdf` has been regenerated from the original
+   Word file with the Gmail address and no LinkedIn line. The editable source is saved as
+   `Hayato Otsuka (updated).docx` in your Downloads folder — edit that and re-export if
+   the contact details change again.
 
 3. **Add a photo.** `src/sections/Hero.astro` renders your initials in the avatar ring.
    There is a commented-out `<img>` block right there — drop a square photo at

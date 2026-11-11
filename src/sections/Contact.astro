@@ -9,6 +9,13 @@ const socialLinks = [
   { key: "twitter", href: site.socials.twitter, icon: "twitter-x", label: "X / Twitter" },
 ].filter((link) => Boolean(link.href));
 
+/**
+ * Form endpoint (e.g. a Formspree URL). Set PUBLIC_CONTACT_ENDPOINT in your
+ * host's environment variables, or in a local .env file. Left unset, the form
+ * degrades to a pre-filled mailto: instead of failing.
+ */
+const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT ?? "";
+
 const inputClass =
   "w-full bg-gray-800/60 border border-gray-600 rounded-lg p-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-tech-teal focus:ring-1 focus:ring-tech-teal transition duration-300";
 ---
@@ -98,16 +105,19 @@ const inputClass =
           <h3 class="text-2xl font-semibold mb-6">Send a Message</h3>
 
           <!--
-            The form posts to Formspree so it works on a static host with no
-            backend. Replace YOUR_FORM_ID with the id from your own (free)
-            formspree.io form — until then, submitting shows a setup notice
-            rather than silently failing.
+            The endpoint comes from PUBLIC_CONTACT_ENDPOINT so it can be set in
+            the host's dashboard without touching code (see .env.example).
+
+            With no endpoint configured, or if the POST fails, the form falls
+            back to opening the visitor's mail client with everything already
+            filled in — so a message is never silently lost.
           -->
           <form
             id="contact-form"
             class="space-y-5"
-            action="https://formspree.io/f/YOUR_FORM_ID"
+            action={endpoint}
             method="POST"
+            data-fallback-email={site.email}
             novalidate
           >
             <div>
@@ -208,13 +218,27 @@ const inputClass =
         return;
       }
 
-      // Guard against shipping the template endpoint: tell the owner what to
-      // fix instead of posting into the void.
-      if (form.action.includes("YOUR_FORM_ID")) {
+      // Last resort: hand the message to the visitor's mail client with every
+      // field already filled in, so their effort is never thrown away.
+      const openMailFallback = (reason: "unconfigured" | "failed") => {
+        const to = form.dataset.fallbackEmail ?? "";
+        const subject = `Portfolio enquiry from ${name}`;
+        const body = `${message}\n\n—\n${name}\n${email}`;
+        const href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
         say(
-          "Form endpoint is not configured yet — set your Formspree ID in Contact.astro. Meanwhile, email works.",
+          reason === "failed"
+            ? "That did not send. Opening your email app with the message ready instead."
+            : "Opening your email app with this message ready to send.",
           "info",
         );
+        window.location.href = href;
+      };
+
+      // No endpoint configured yet (action is empty) — go straight to mail.
+      const action = form.getAttribute("action");
+      if (!action) {
+        openMailFallback("unconfigured");
         return;
       }
 
@@ -222,7 +246,7 @@ const inputClass =
       if (label) label.textContent = "Sending...";
 
       try {
-        const response = await fetch(form.action, {
+        const response = await fetch(action, {
           method: "POST",
           body: data,
           headers: { Accept: "application/json" },
@@ -234,7 +258,7 @@ const inputClass =
         say("Thanks — your message is on its way. I will reply shortly.", "ok");
       } catch (error) {
         console.error(error);
-        say("Something went wrong sending that. Please email me directly.", "error");
+        openMailFallback("failed");
       } finally {
         if (button) button.disabled = false;
         if (label) label.textContent = "Send Message";
