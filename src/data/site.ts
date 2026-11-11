@@ -190,6 +190,7 @@ export const expertise = [
 export const projects = [
   {
     title: "Enterprise RAG & Agent Platform",
+    visual: "rag",
     language: "Python",
     body: "Company-wide retrieval-augmented generation and agentic workflow platform serving 45,000+ internal users. Owned the ingestion and embedding pipeline, vector-backed retrieval, multi-agent orchestration, and the enterprise blueprints other teams built against.",
     tags: ["FastAPI", "LangChain", "pgvector", "RAG"],
@@ -199,6 +200,7 @@ export const projects = [
   },
   {
     title: "Monolith to Microservices Migration",
+    visual: "microservices",
     language: "Java",
     body: "Led the decomposition of core monolithic transaction engines into distributed Java (Spring Boot) and Python services on AWS EKS. Defined the service boundaries and rollout sequence that delivered a 3.5x throughput gain without a freeze on feature work.",
     tags: ["Spring Boot", "AWS EKS", "Kubernetes", "Python"],
@@ -208,6 +210,7 @@ export const projects = [
   },
   {
     title: "Customer Portal Modernization",
+    visual: "portal",
     language: "TypeScript",
     body: "Rebuilt several legacy customer portals in TypeScript, React and Next.js, bringing average page load from 3.8s down to 1.1s. Introduced streaming SSE and WebSocket channels so agent output and intermediate reasoning surface in the UI as they are produced.",
     tags: ["React", "Next.js", "SSE / WebSockets", "Redux"],
@@ -217,6 +220,7 @@ export const projects = [
   },
   {
     title: "LLM Guardrails & Semantic Cache",
+    visual: "guardrails",
     language: "Python",
     body: "Production guardrail and semantic caching layer using LlamaGuard to screen model input and output, blocking prompt injection and data exfiltration across every client entry point while cutting token inference and cloud cost.",
     tags: ["LlamaGuard", "Semantic Caching", "OWASP", "Security"],
@@ -226,6 +230,7 @@ export const projects = [
   },
   {
     title: "Real-Time Telemetry Platform",
+    visual: "telemetry",
     language: "Java",
     body: "High-concurrency Java and Python REST APIs backing 4.5M+ daily transactional events, surfaced through interactive React dashboards with live WebSocket telemetry and scikit-learn/PyTorch micro-models for automatic anomaly detection.",
     tags: ["Spring Boot", "WebSockets", "React", "PyTorch"],
@@ -235,6 +240,7 @@ export const projects = [
   },
   {
     title: "Kafka Event-Driven Ingestion Tier",
+    visual: "kafka",
     language: "Java",
     body: "Re-architected the data ingestion tier on Apache Kafka to decouple high-volume analytical traffic from primary relational storage, paired with Terraform modules for RDS PostgreSQL, ECS and S3 that cut infrastructure time-to-market by 60%.",
     tags: ["Kafka", "Terraform", "PostgreSQL", "AWS"],

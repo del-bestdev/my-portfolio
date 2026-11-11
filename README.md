@@ -31,6 +31,28 @@ them all.
 | A section's layout | `src/sections/*.astro` |
 | Icons available to `<Icon name="…" />` | `src/components/Icon.astro` |
 
+### Project card visuals
+
+Each project renders a schematic architecture diagram as its card header, chosen by the
+`visual` field in `site.ts`. Available motifs:
+
+| `visual` | Shows |
+| --- | --- |
+| `rag` | documents → vector DB → LLM retrieval pipeline |
+| `microservices` | a monolith decomposing into independent services |
+| `portal` | a browser with a 3.8s → 1.1s load-time comparison |
+| `guardrails` | request → guardrail → model, over a semantic cache |
+| `telemetry` | a live event stream with an anomaly flagged |
+| `kafka` | a producer writing into partitioned topics |
+
+They are drawn in `src/components/ProjectVisual.astro` as inline SVG — original work, no
+image files, crisp at any size. **They are deliberately not screenshots.** The systems are
+internal and under NDA, so nothing public exists to capture, and using an employer's
+marketing site would imply you built their consumer product.
+
+If you later have a screenshot you are cleared to publish, add `image: "/img/projects/x.png"`
+to that project. It takes precedence over `visual` automatically — no code changes.
+
 ### Design tokens
 
 Defined in the `@theme` block of `src/styles/global.css`:

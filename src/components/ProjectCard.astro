@@ -1,6 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import GradientCard from "./GradientCard.astro";
+import ProjectVisual from "./ProjectVisual.astro";
 
 interface Project {
   title: string;
@@ -9,6 +10,10 @@ interface Project {
   tags: string[];
   repo?: string;
   demo?: string;
+  /** Diagram motif drawn as the card header. */
+  visual?: string;
+  /** Real screenshot. Takes precedence over `visual` when set. */
+  image?: string;
 }
 
 interface Props {
@@ -30,7 +35,31 @@ const LANGUAGE_COLORS: Record<string, string> = {
 const dotColor = LANGUAGE_COLORS[project.language] ?? "#06b6d4";
 ---
 
-<GradientCard as="article" class="flex" bodyClass="p-6 flex flex-col">
+<GradientCard as="article" class="flex" bodyClass="flex flex-col overflow-hidden">
+  {
+    (project.image || project.visual) && (
+      <div class="relative border-b border-tech-teal/15 bg-tech-darker">
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={`${project.title} screenshot`}
+            loading="lazy"
+            decoding="async"
+            class="w-full aspect-[5/2] object-cover"
+          />
+        ) : (
+          <ProjectVisual kind={project.visual!} />
+        )}
+        {/* Fade the diagram into the card body so it reads as one surface. */}
+        <div
+          class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-tech-dark to-transparent"
+          aria-hidden="true"
+        />
+      </div>
+    )
+  }
+
+  <div class="p-6 flex flex-col flex-1">
   <div class="flex items-center justify-between gap-4 mb-3">
     <h3 class="text-xl font-semibold">{project.title}</h3>
     <span class="flex items-center gap-1.5 flex-shrink-0 text-xs text-gray-400 font-mono">
@@ -84,5 +113,6 @@ const dotColor = LANGUAGE_COLORS[project.language] ?? "#06b6d4";
         <span class="font-mono text-xs text-gray-500">Private / under NDA</span>
       ) : null
     }
+    </div>
   </div>
 </GradientCard>
