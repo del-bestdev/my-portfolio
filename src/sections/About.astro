@@ -1,0 +1,138 @@
+---
+import Icon from "../components/Icon.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { site, about } from "../data/site";
+---
+
+<section id="about" class="py-20 relative overflow-hidden">
+  <div class="absolute inset-0 bg-circuit opacity-[0.05]" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+    <SectionHeading lead="About" accent="Me" />
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+      <!-- Narrative + skill bars. Sticky on desktop: the experience timeline
+           beside it is much taller, so this keeps the summary in view instead
+           of leaving a long empty column. -->
+      <div class="reveal lg:sticky lg:top-24 lg:self-start">
+        <h3 class="text-2xl font-semibold mb-1">{site.name}</h3>
+        <p class="font-mono text-sm text-tech-teal mb-6">
+          {site.role} · {site.tagline}
+        </p>
+
+        <div class="space-y-4 text-gray-300 leading-relaxed">
+          {about.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+
+        <h4 class="text-xl font-semibold mt-10 mb-5">Core Strengths</h4>
+        <ul class="space-y-4">
+          {
+            about.skills.map((skill) => (
+              <li>
+                <div class="flex items-center justify-between mb-1.5 text-sm">
+                  <span class="text-gray-300">{skill.label}</span>
+                  <span class="font-mono text-tech-teal">{skill.value}%</span>
+                </div>
+                <div
+                  class="w-full h-2.5 rounded-full bg-gray-800 overflow-hidden"
+                  role="meter"
+                  aria-valuenow={skill.value}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-label={skill.label}
+                >
+                  <div
+                    class="skill-bar h-full rounded-full bg-gradient-tech"
+                    data-value={skill.value}
+                    style="width: 0%"
+                  />
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Experience timeline -->
+      <div class="reveal">
+        <h4 class="text-xl font-semibold mb-6 flex items-center gap-2">
+          <Icon name="briefcase-fill" class="text-tech-teal" />
+          Experience
+        </h4>
+
+        <ol class="relative border-l border-tech-teal/25 ml-2 space-y-8">
+          {
+            about.experience.map((job) => (
+              <li class="pl-6 relative">
+                <span
+                  class="absolute -left-[6.5px] top-1.5 size-3 rounded-full bg-gradient-tech ring-4 ring-tech-dark"
+                  aria-hidden="true"
+                />
+                <p class="font-mono text-xs text-tech-teal mb-1">{job.period}</p>
+                <h5 class="text-lg font-semibold">{job.role}</h5>
+                <p class="text-gray-400 text-sm mb-3">{job.company}</p>
+                <ul class="space-y-2">
+                  {job.points.map((point) => (
+                    <li class="flex gap-2 text-gray-300 text-sm leading-relaxed">
+                      <Icon
+                        name="check-lg"
+                        class="text-tech-teal flex-shrink-0 mt-1"
+                      />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h4 class="text-xl font-semibold mt-10 mb-4 flex items-center gap-2">
+          <Icon name="file-earmark-text" class="text-tech-teal" />
+          Education
+        </h4>
+        <div class="pl-2">
+          <p class="font-mono text-xs text-tech-teal mb-1">{about.education.period}</p>
+          <p class="font-semibold">{about.education.degree}</p>
+          <p class="text-gray-400 text-sm">{about.education.school}</p>
+        </div>
+
+        <!-- Signature line -->
+        <div class="mt-10 rounded-lg border-code bg-tech-darker p-5">
+          <p class="font-mono text-sm text-gray-300">
+            <span class="text-tech-purple">/*</span>
+            Building thoughtfully. Engineering with purpose.
+            <span class="text-tech-purple">*/</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Fill the proficiency bars once they scroll into view. Width is driven from
+  // the data attribute so the markup ships at 0% and cannot flash full-width.
+  const bars = document.querySelectorAll<HTMLElement>(".skill-bar");
+
+  if (bars.length) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const bar = entry.target as HTMLElement;
+          if (!reduceMotion) {
+            bar.style.transition = "width 1.2s cubic-bezier(0.22, 1, 0.36, 1)";
+          }
+          bar.style.width = `${bar.dataset.value ?? 0}%`;
+          obs.unobserve(bar);
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    bars.forEach((bar) => observer.observe(bar));
+  }
+</script>

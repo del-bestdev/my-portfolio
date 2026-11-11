@@ -1,0 +1,51 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { site, projects } from "../data/site";
+---
+
+<Base
+  title={`Projects — ${site.name}`}
+  description="Selected engineering projects: distributed platforms, AI-enabled products and the infrastructure that runs them."
+>
+  <section class="pt-32 pb-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-circuit opacity-[0.05]" aria-hidden="true"></div>
+    <div
+      class="absolute -top-24 right-0 w-96 h-96 rounded-full bg-tech-purple opacity-20 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+      <SectionHeading
+        lead="All"
+        accent="Projects"
+        subtitle="Systems I designed and built, across backend platforms, applied AI and developer infrastructure."
+      />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+
+      <div class="text-center mt-12 flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="/#contact"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-gradient-tech neon-hover transition-all duration-300"
+        >
+          Get In Touch
+        </a>
+        <a
+          href={site.socials.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-tech-teal text-tech-teal hover:bg-tech-teal hover:text-tech-dark transition-all duration-300 neon-hover"
+        >
+          <Icon name="github" />
+          More on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

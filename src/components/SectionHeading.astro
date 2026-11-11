@@ -1,0 +1,26 @@
+---
+/**
+ * Centred section title. The last word (or whatever is passed as `accent`)
+ * picks up the purple-to-teal gradient, matching the rest of the page.
+ */
+interface Props {
+  lead: string;
+  accent?: string;
+  subtitle?: string;
+  class?: string;
+}
+
+const { lead, accent, subtitle, class: className = "" } = Astro.props;
+---
+
+<div class={`text-center mb-12 ${className}`}>
+  <h2 class="text-3xl lg:text-4xl leading-[1.2] font-semibold">
+    {lead}
+    {accent && <span class="text-gradient-tech"> {accent}</span>}
+  </h2>
+  {
+    subtitle && (
+      <p class="text-gray-400 mt-4 max-w-2xl mx-auto">{subtitle}</p>
+    )
+  }
+</div>

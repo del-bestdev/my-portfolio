@@ -1,0 +1,32 @@
+---
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { projects } from "../data/site";
+
+const featured = projects.filter((p) => p.featured);
+---
+
+<section id="portfolio" class="py-20 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+    <SectionHeading
+      lead="Featured"
+      accent="Projects"
+      subtitle="Selected systems I designed and built. Each note describes my own contribution rather than the product as a whole."
+    />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+      {featured.map((project) => <ProjectCard project={project} />)}
+    </div>
+
+    <div class="text-center mt-12">
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-tech-teal text-tech-teal hover:bg-tech-teal hover:text-tech-dark transition-all duration-300 neon-hover"
+      >
+        See All Projects
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </div>
+</section>

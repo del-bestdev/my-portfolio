@@ -1,0 +1,244 @@
+---
+import Icon from "../components/Icon.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { site } from "../data/site";
+
+const socialLinks = [
+  { key: "github", href: site.socials.github, icon: "github", label: "GitHub" },
+  { key: "linkedin", href: site.socials.linkedin, icon: "linkedin", label: "LinkedIn" },
+  { key: "twitter", href: site.socials.twitter, icon: "twitter-x", label: "X / Twitter" },
+].filter((link) => Boolean(link.href));
+
+const inputClass =
+  "w-full bg-gray-800/60 border border-gray-600 rounded-lg p-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-tech-teal focus:ring-1 focus:ring-tech-teal transition duration-300";
+---
+
+<section id="contact" class="py-20 relative overflow-hidden">
+  <div class="absolute inset-0 bg-circuit opacity-[0.07]" aria-hidden="true"></div>
+  <div
+    class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-tech-purple opacity-20 blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+    <SectionHeading lead="Connect With Me" accent="Today" />
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 reveal">
+      <!-- Details -->
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-2xl font-semibold mb-4 text-tech-teal">Let's Talk</h3>
+          <p class="text-gray-300 max-w-md leading-relaxed">
+            I am open to senior and staff engineering roles, and happy to talk through an
+            architecture problem even if there is no role attached. The fastest way to reach
+            me is email.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-semibold mb-4">Contact Details</h4>
+          <ul class="space-y-4 text-gray-300">
+            <li class="flex items-center">
+              <Icon name="envelope-fill" class="text-tech-teal text-2xl mr-3 flex-shrink-0" />
+              <a
+                href={`mailto:${site.email}`}
+                class="hover:text-tech-teal transition duration-300 break-all"
+              >
+                {site.email}
+              </a>
+            </li>
+            {
+              site.phone && (
+                <li class="flex items-center">
+                  <Icon
+                    name="telephone-fill"
+                    class="text-tech-teal text-2xl mr-3 flex-shrink-0"
+                  />
+                  <a
+                    href={`tel:${site.phone.replace(/[^+\d]/g, "")}`}
+                    class="hover:text-tech-teal transition duration-300"
+                  >
+                    {site.phone}
+                  </a>
+                </li>
+              )
+            }
+            <li class="flex items-center">
+              <Icon name="geo-alt-fill" class="text-tech-teal text-2xl mr-3 flex-shrink-0" />
+              <span>{site.location}</span>
+            </li>
+          </ul>
+        </div>
+
+        {
+          socialLinks.length > 0 && (
+            <div>
+              <h4 class="text-xl font-semibold mb-4">Stay Connected</h4>
+              <div class="flex items-center gap-6">
+                {socialLinks.map((link) => (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-gray-300 hover:text-tech-teal transition duration-300"
+                  >
+                    <Icon name={link.icon} class="text-3xl" title={link.label} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Form -->
+      <div class="bg-gradient-to-br from-tech-purple to-tech-teal p-0.5 rounded-lg neon-hover">
+        <div class="bg-tech-dark rounded-[calc(var(--radius-lg)-1px)] p-6 sm:p-8">
+          <h3 class="text-2xl font-semibold mb-6">Send a Message</h3>
+
+          <!--
+            The form posts to Formspree so it works on a static host with no
+            backend. Replace YOUR_FORM_ID with the id from your own (free)
+            formspree.io form — until then, submitting shows a setup notice
+            rather than silently failing.
+          -->
+          <form
+            id="contact-form"
+            class="space-y-5"
+            action="https://formspree.io/f/YOUR_FORM_ID"
+            method="POST"
+            novalidate
+          >
+            <div>
+              <label for="name" class="block text-gray-300 mb-2 font-medium text-sm">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class={inputClass}
+                placeholder="Jane Doe"
+                autocomplete="name"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="email" class="block text-gray-300 mb-2 font-medium text-sm">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class={inputClass}
+                placeholder="jane@company.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="message" class="block text-gray-300 mb-2 font-medium text-sm">
+                Your Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                class={inputClass}
+                placeholder="A little about the role or the problem you are solving..."
+                required></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full flex items-center justify-center gap-2 bg-gradient-tech px-6 py-3 rounded-lg font-semibold neon-hover transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Icon name="send-fill" />
+              <span data-button-label>Send Message</span>
+            </button>
+
+            <p
+              id="form-status"
+              class="text-sm hidden"
+              role="status"
+              aria-live="polite"
+            >
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const status = document.getElementById("form-status");
+
+  if (form && status) {
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const label = form.querySelector<HTMLElement>("[data-button-label]");
+
+    const say = (message: string, kind: "ok" | "error" | "info") => {
+      status.textContent = message;
+      status.classList.remove("hidden", "text-green-400", "text-red-400", "text-gray-400");
+      status.classList.add(
+        kind === "ok" ? "text-green-400" : kind === "error" ? "text-red-400" : "text-gray-400",
+      );
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+      const name = String(data.get("name") ?? "").trim();
+      const email = String(data.get("email") ?? "").trim();
+      const message = String(data.get("message") ?? "").trim();
+
+      if (!name || !email || !message) {
+        say("Please fill in every field.", "error");
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        say("That email address does not look right.", "error");
+        return;
+      }
+
+      // Guard against shipping the template endpoint: tell the owner what to
+      // fix instead of posting into the void.
+      if (form.action.includes("YOUR_FORM_ID")) {
+        say(
+          "Form endpoint is not configured yet — set your Formspree ID in Contact.astro. Meanwhile, email works.",
+          "info",
+        );
+        return;
+      }
+
+      if (button) button.disabled = true;
+      if (label) label.textContent = "Sending...";
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" },
+        });
+
+        if (!response.ok) throw new Error(`Request failed with ${response.status}`);
+
+        form.reset();
+        say("Thanks — your message is on its way. I will reply shortly.", "ok");
+      } catch (error) {
+        console.error(error);
+        say("Something went wrong sending that. Please email me directly.", "error");
+      } finally {
+        if (button) button.disabled = false;
+        if (label) label.textContent = "Send Message";
+      }
+    });
+  }
+</script>

@@ -1,0 +1,185 @@
+---
+import Icon from "../components/Icon.astro";
+import { site, hero, stats } from "../data/site";
+
+// Drive the floating chip from the headline stat so the two can never disagree.
+const years = stats[0];
+---
+
+<section
+  id="home"
+  class="relative flex items-center overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-20"
+>
+  <!-- Layered backdrop: circuit pattern, hex rain, two colour blooms -->
+  <div class="absolute inset-0 bg-circuit opacity-[0.07]" aria-hidden="true"></div>
+  <div class="matrix-bg" id="matrixBg" aria-hidden="true"></div>
+  <div
+    class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-tech-purple opacity-20 blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="absolute -bottom-32 -right-24 w-96 h-96 rounded-full bg-tech-teal opacity-10 blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+      <!-- Copy -->
+      <div>
+        <p
+          class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-tech-teal/30 bg-tech-teal/5 font-mono text-xs text-tech-teal"
+        >
+          <span class="relative flex size-2">
+            <span
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-tech-teal opacity-75"
+            ></span>
+            <span class="relative inline-flex size-2 rounded-full bg-tech-teal"></span>
+          </span>
+          {site.availability}
+        </p>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+          {hero.titleLead}<br />
+          <span class="text-gradient-tech">{hero.titleGradient}</span>
+        </h1>
+
+        <p class="text-gray-300 text-lg leading-relaxed max-w-xl mb-8">
+          {hero.blurb}
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a
+            href="/#portfolio"
+            class="bg-gradient-tech px-8 py-3 rounded-lg font-semibold text-center neon-hover transition-all duration-300"
+          >
+            View Projects
+          </a>
+          <a
+            href="/#contact"
+            class="border border-tech-teal px-8 py-3 rounded-lg font-medium text-center text-tech-teal hover:bg-tech-teal hover:text-tech-dark transition-all duration-300 neon-hover"
+          >
+            Get In Touch
+          </a>
+        </div>
+
+        <!-- Credential strip -->
+        <div class="flex flex-col justify-start mt-10 gap-4">
+          <div class="flex items-start gap-3">
+            <Icon name="award-fill" class="text-xl text-tech-teal mt-0.5 flex-shrink-0" />
+            <div>
+              <p class="font-semibold text-sm">{hero.badge.title}</p>
+              <p class="text-gray-400 text-sm">{hero.badge.subtitle}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <Icon name="geo-alt-fill" class="text-xl text-tech-teal flex-shrink-0" />
+            <p class="text-gray-400 text-sm">{site.location}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avatar: concentric neon rings with a rotating dashed orbit -->
+      <div class="relative flex items-center justify-center min-h-[22rem] lg:min-h-[30rem]">
+        <div
+          class="relative size-80 md:size-96 rounded-full border-4 border-tech-teal bg-tech-dark flex items-center justify-center neon-hover"
+        >
+          <div
+            class="rounded-full size-64 md:size-72 border-2 border-tech-purple bg-gradient-to-br from-tech-purple to-tech-teal p-1"
+          >
+            <div
+              class="aspect-square overflow-hidden rounded-full bg-tech-dark flex items-center justify-center"
+            >
+              <!-- TODO: replace with a real photo:
+                   drop it in public/img/avatar.jpg and swap this block for
+                   <img src="/img/avatar.jpg" alt={site.name} width="288" height="288"
+                        class="w-full h-full object-cover" /> -->
+              <div class="text-center px-6">
+                <p class="font-mono text-6xl md:text-7xl font-bold text-gradient-tech">
+                  {site.initials}
+                </p>
+                <p class="font-mono text-xs text-tech-teal mt-3 tracking-widest uppercase">
+                  {site.role}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rotating orbit + orbiting nodes -->
+          <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <svg class="rotating-circle w-full h-full" viewBox="0 0 200 200">
+              <circle
+                cx="100"
+                cy="100"
+                r="96"
+                fill="none"
+                stroke="#06b6d4"
+                stroke-width="1"
+                stroke-dasharray="6 10"
+                opacity="0.55"></circle>
+              <circle cx="100" cy="4" r="4" fill="#9333ea"></circle>
+              <circle cx="196" cy="100" r="3" fill="#06b6d4"></circle>
+              <circle cx="100" cy="196" r="3" fill="#06b6d4"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Floating code chips -->
+        <div
+          class="absolute top-4 right-0 sm:right-4 font-mono text-xs bg-tech-dark/90 border border-tech-purple/40 rounded-lg px-3 py-2 backdrop-blur-sm"
+          aria-hidden="true"
+        >
+          <span class="text-tech-purple">const</span>
+          <span class="text-gray-300"> role =</span>
+          <span class="text-tech-teal"> "staff"</span>
+        </div>
+        <div
+          class="absolute bottom-6 left-0 sm:left-2 font-mono text-xs bg-tech-dark/90 border border-tech-teal/40 rounded-lg px-3 py-2 backdrop-blur-sm"
+          aria-hidden="true"
+        >
+          <span class="text-tech-teal">{years.value}{years.suffix}</span>
+          <span class="text-gray-300"> years shipping</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Hex "rain": short-lived digits that twinkle across the hero backdrop.
+  // Nodes are removed as soon as their animation ends so the DOM stays small.
+  function startMatrix() {
+    const host = document.getElementById("matrixBg");
+    if (!host) return;
+
+    // Honour the reduced-motion preference — the CSS hides the layer, so
+    // there is no point spending frames building it.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const CHARS = "0123456789ABCDEF";
+    const SPAWN_MS = 200;
+    const LIFETIME_MS = 2500;
+
+    const spawn = () => {
+      // Pause entirely when the tab is hidden or the hero is scrolled past.
+      if (document.hidden) return;
+
+      const el = document.createElement("div");
+      el.className = "matrix-number";
+      el.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+      el.style.left = `${Math.random() * 100}%`;
+      el.style.top = `${Math.random() * 100}%`;
+      el.style.animationDelay = `${Math.random() * 1.5}s`;
+      el.style.animationDuration = `${Math.random() + 1.5}s`;
+      host.appendChild(el);
+      setTimeout(() => el.remove(), LIFETIME_MS);
+    };
+
+    // Stagger an initial burst so the hero is not empty on first paint.
+    for (let i = 0; i < 30; i++) setTimeout(spawn, i * 50);
+    setInterval(spawn, SPAWN_MS);
+  }
+
+  startMatrix();
+</script>

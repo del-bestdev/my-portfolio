@@ -1,0 +1,24 @@
+---
+/**
+ * The site's signature card: a 2px purple-to-teal gradient border wrapping a
+ * dark panel. Implemented as padding on the gradient-filled outer element so
+ * the border follows the rounded corners exactly.
+ */
+interface Props {
+  class?: string;
+  /** Padding applied to the inner panel. */
+  bodyClass?: string;
+  /** Render as <li> when the card sits in a list. */
+  as?: "div" | "li" | "article";
+}
+
+const { class: className = "", bodyClass = "p-6", as: Tag = "div" } = Astro.props;
+---
+
+<Tag
+  class={`bg-gradient-to-br from-tech-purple to-tech-teal p-0.5 rounded-lg neon-hover ${className}`}
+>
+  <div class={`bg-tech-dark rounded-[calc(var(--radius-lg)-1px)] h-full ${bodyClass}`}>
+    <slot />
+  </div>
+</Tag>

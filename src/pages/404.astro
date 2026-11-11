@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../data/site";
+---
+
+<Base title={`Page not found — ${site.name}`} description="That page does not exist.">
+  <section class="min-h-[70vh] flex items-center relative overflow-hidden py-24">
+    <div class="absolute inset-0 bg-circuit opacity-[0.07]" aria-hidden="true"></div>
+
+    <div class="max-w-2xl mx-auto px-4 text-center relative z-10">
+      <p class="font-mono text-7xl sm:text-8xl font-bold text-gradient-tech mb-4">404</p>
+      <h1 class="text-2xl sm:text-3xl font-semibold mb-4">
+        This route was never defined.
+      </h1>
+      <p class="text-gray-400 mb-8">
+        The page you asked for does not exist — it may have been moved or renamed.
+      </p>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-gradient-tech neon-hover transition-all duration-300"
+      >
+        <Icon name="arrow-right" />
+        Back to home
+      </a>
+    </div>
+  </section>
+</Base>

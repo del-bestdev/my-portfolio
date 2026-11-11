@@ -1,0 +1,179 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site, about } from "../data/site";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = `${site.name} — ${site.role}`,
+  description = `${site.role} with 12+ years building distributed enterprise systems and production AI — Python, Java, TypeScript and React. Based in Tokyo, open to senior and staff roles.`,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+/** JSON-LD so search engines and recruiter tooling read the profile structurally. */
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  jobTitle: site.role,
+  email: `mailto:${site.email}`,
+  description,
+  url: canonical.href,
+  sameAs: Object.values(site.socials).filter(Boolean),
+  address: { "@type": "PostalAddress", addressLocality: "Tokyo", addressCountry: "JP" },
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: about.education.school,
+  },
+  knowsAbout: [
+    "Software Architecture",
+    "Distributed Systems",
+    "Backend Engineering",
+    "Platform Engineering",
+    "Retrieval-Augmented Generation",
+    "Large Language Models",
+    "Python",
+    "Java",
+    "React",
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical.href} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    <meta name="theme-color" content="#0f0921" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Fonts: preconnect so the display font is not on the critical path twice -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Fira+Code:wght@400;500;600;700&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  </head>
+
+  <body class="bg-tech-dark text-white font-sans antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-tech-teal focus:text-tech-dark focus:font-semibold"
+    >
+      Skip to content
+    </a>
+
+    <!-- Neon trailing cursor (pointer devices only; hidden via CSS otherwise) -->
+    <div class="custom-cursor" id="cursor" style="opacity:0" aria-hidden="true"></div>
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      // --- Trailing neon cursor ------------------------------------------
+      // Skipped entirely on touch/coarse pointers and for reduced-motion users.
+      function initCursor() {
+        const cursor = document.getElementById("cursor");
+        if (!cursor) return;
+
+        const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!fine || reduceMotion) return;
+
+        const OFFSET = 10; // half the dot's size, to centre it on the pointer
+        const EASE = 0.5;
+
+        let targetX = 0;
+        let targetY = 0;
+        let x = 0;
+        let y = 0;
+        let seen = false;
+
+        cursor.style.transition = "opacity .25s ease, width .15s, height .15s";
+
+        document.addEventListener(
+          "mousemove",
+          (event) => {
+            targetX = event.clientX - OFFSET;
+            targetY = event.clientY - OFFSET;
+            if (!seen) {
+              seen = true;
+              cursor.style.opacity = "1";
+            }
+          },
+          { passive: true },
+        );
+
+        const frame = () => {
+          x += (targetX - x) * EASE;
+          y += (targetY - y) * EASE;
+          cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+
+        // Grow the ring over anything clickable.
+        document.querySelectorAll("a, button, .neon-hover, input, textarea").forEach((el) => {
+          el.addEventListener("mouseenter", () => cursor.classList.add("hover"));
+          el.addEventListener("mouseleave", () => cursor.classList.remove("hover"));
+        });
+      }
+
+      // --- Reveal sections on scroll -------------------------------------
+      function initReveal() {
+        const targets = document.querySelectorAll(".reveal");
+        if (!targets.length) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          targets.forEach((el) => el.classList.add("is-visible"));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add("is-visible");
+              obs.unobserve(entry.target);
+            }
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+        );
+
+        targets.forEach((el) => observer.observe(el));
+      }
+
+      initCursor();
+      initReveal();
+    </script>
+  </body>
+</html>

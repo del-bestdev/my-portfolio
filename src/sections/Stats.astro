@@ -1,0 +1,123 @@
+---
+import Icon from "../components/Icon.astro";
+import GradientCard from "../components/GradientCard.astro";
+import { stats, stack } from "../data/site";
+---
+
+<section id="statistic" class="py-20 relative overflow-hidden">
+  <div
+    class="absolute top-1/2 left-1/4 w-72 h-72 rounded-full bg-tech-purple opacity-10 blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 lg:items-center">
+      <!-- Counters -->
+      <div class="grid grid-cols-2 gap-6 sm:gap-8 reveal">
+        {
+          stats.map((stat) => (
+            <GradientCard bodyClass="p-5">
+              <Icon name={stat.icon} class="text-tech-teal text-4xl sm:text-5xl mb-3" />
+              <p class="text-3xl sm:text-4xl font-bold font-mono">
+                <span
+                  class="counter"
+                  data-counter={stat.value}
+                  data-suffix={stat.suffix}
+                >
+                  0{stat.suffix}
+                </span>
+              </p>
+              <p class="text-gray-400 text-sm mt-1">{stat.label}</p>
+            </GradientCard>
+          ))
+        }
+      </div>
+
+      <!-- Terminal-styled stack readout -->
+      <div class="reveal">
+        <div class="rounded-lg border-code bg-tech-darker overflow-hidden">
+          <!-- Window chrome -->
+          <div
+            class="flex items-center gap-2 px-4 py-3 border-b border-tech-teal/20 bg-tech-dark"
+          >
+            <span class="size-3 rounded-full bg-red-500/80"></span>
+            <span class="size-3 rounded-full bg-yellow-500/80"></span>
+            <span class="size-3 rounded-full bg-green-500/80"></span>
+            <span class="ml-2 font-mono text-xs text-gray-400">~/stack.json</span>
+          </div>
+
+          <div class="p-5 sm:p-6 font-mono text-sm space-y-5">
+            {
+              stack.map((group) => (
+                <div>
+                  <p class="text-tech-purple mb-2">
+                    <span class="text-gray-500">#</span> {group.group}
+                  </p>
+                  <ul class="flex flex-wrap gap-2">
+                    {group.items.map((item) => (
+                      <li class="px-2.5 py-1 rounded border border-tech-teal/25 bg-tech-teal/5 text-tech-teal text-xs">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Count each stat up from zero the first time it scrolls into view.
+  // `prefers-reduced-motion` users get the final value immediately.
+  const counters = document.querySelectorAll<HTMLElement>(".counter");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Match the target's own precision, so 4.5 counts up to "4.5" and not "5".
+  const render = (el: HTMLElement, value: number, decimals: number) => {
+    el.textContent = `${value.toFixed(decimals)}${el.dataset.suffix ?? ""}`;
+  };
+
+  const animate = (el: HTMLElement) => {
+    const raw = el.dataset.counter ?? "0";
+    const target = Number(raw);
+    const decimals = (raw.split(".")[1] ?? "").length;
+
+    if (reduceMotion) {
+      render(el, target, decimals);
+      return;
+    }
+
+    const DURATION = 1600;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / DURATION, 1);
+      // easeOutCubic — fast at first, settling onto the final number
+      const eased = 1 - Math.pow(1 - progress, 3);
+      render(el, target * eased, decimals);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  if (counters.length) {
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          animate(entry.target as HTMLElement);
+          obs.unobserve(entry.target); // run once
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    counters.forEach((el) => observer.observe(el));
+  }
+</script>

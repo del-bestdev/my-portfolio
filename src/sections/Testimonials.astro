@@ -1,0 +1,91 @@
+---
+import Icon from "../components/Icon.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { testimonials } from "../data/site";
+
+// Renders nothing until there is at least one genuine quote in site.ts.
+// Fabricated recommendations are a liability on a page you send to employers.
+---
+
+{
+  testimonials.length > 0 && (
+    <section id="testimonials" class="py-20 relative overflow-hidden bg-tech-purple/10">
+      <div class="max-w-5xl mx-auto px-4 lg:px-8 relative z-10">
+        <SectionHeading lead="What Colleagues" accent="Say" />
+
+        <div class="relative reveal" id="testimonial-carousel">
+          <div class="overflow-hidden">
+            <div
+              class="flex transition-transform duration-500 ease-out"
+              id="testimonial-track"
+            >
+              {testimonials.map((item) => (
+                <figure class="w-full flex-shrink-0 px-1">
+                  <div class="bg-gradient-to-br from-tech-purple to-tech-teal p-0.5 rounded-lg h-full">
+                    <div class="bg-tech-dark rounded-[calc(var(--radius-lg)-1px)] p-8 h-full">
+                      <Icon name="quote" class="text-tech-purple text-4xl mb-4" />
+                      <blockquote class="text-gray-200 text-lg leading-relaxed mb-6">
+                        {item.quote}
+                      </blockquote>
+                      <figcaption>
+                        <p class="font-semibold">{item.name}</p>
+                        <p class="text-gray-400 text-sm">{item.title}</p>
+                      </figcaption>
+                    </div>
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </div>
+
+          {testimonials.length > 1 && (
+            <div class="flex items-center justify-center gap-3 mt-8" id="testimonial-dots">
+              {testimonials.map((item, i) => (
+                <button
+                  type="button"
+                  class="testimonial-dot size-2.5 rounded-full bg-gray-600 transition-all duration-300"
+                  data-index={i}
+                  aria-label={`Show testimonial from ${item.name}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  const track = document.getElementById("testimonial-track");
+  const dots = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".testimonial-dot"),
+  );
+
+  if (track && dots.length > 1) {
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const show = (next: number) => {
+      index = (next + dots.length) % dots.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((dot, i) => {
+        const active = i === index;
+        dot.classList.toggle("bg-gray-600", !active);
+        dot.classList.toggle("bg-tech-teal", active);
+        dot.classList.toggle("w-6", active);
+        dot.setAttribute("aria-current", String(active));
+      });
+    };
+
+    dots.forEach((dot) =>
+      dot.addEventListener("click", () => {
+        show(Number(dot.dataset.index));
+        clearInterval(timer); // a manual choice stops the auto-advance
+      }),
+    );
+
+    show(0);
+    timer = setInterval(() => show(index + 1), 6000);
+  }
+</script>

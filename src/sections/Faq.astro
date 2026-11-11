@@ -1,0 +1,88 @@
+---
+import Icon from "../components/Icon.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { faq } from "../data/site";
+---
+
+<section id="faq" class="py-20 relative overflow-hidden bg-tech-purple/10">
+  <div class="absolute inset-0 bg-circuit opacity-[0.05]" aria-hidden="true"></div>
+
+  <div class="max-w-4xl mx-auto px-4 lg:px-8 relative z-10">
+    <SectionHeading
+      lead="Frequently Asked"
+      accent="Questions"
+      subtitle="The things hiring managers and engineering leads usually want to know first."
+    />
+
+    <div class="space-y-4 reveal" id="faq-list">
+      {
+        faq.map((item, i) => (
+          <div class="rounded-lg border border-tech-teal/20 bg-tech-dark/60 overflow-hidden transition-colors duration-300 hover:border-tech-teal/50">
+            <h3>
+              <button
+                type="button"
+                class="faq-trigger w-full flex items-center justify-between gap-4 text-left px-5 py-4 font-semibold"
+                aria-expanded={i === 0 ? "true" : "false"}
+                aria-controls={`faq-panel-${i}`}
+                id={`faq-trigger-${i}`}
+              >
+                <span>{item.q}</span>
+                <Icon
+                  name="chevron-down"
+                  class="faq-chevron text-tech-teal flex-shrink-0 transition-transform duration-300"
+                />
+              </button>
+            </h3>
+            <div
+              id={`faq-panel-${i}`}
+              role="region"
+              aria-labelledby={`faq-trigger-${i}`}
+              class="faq-panel grid transition-[grid-template-rows] duration-300 ease-out"
+              style={`grid-template-rows: ${i === 0 ? "1fr" : "0fr"}`}
+            >
+              <div class="overflow-hidden">
+                <p class="px-5 pb-5 text-gray-300 leading-relaxed">{item.a}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Accordion. Height is animated via grid-template-rows 0fr -> 1fr, which
+  // transitions cleanly without needing to measure scrollHeight in JS.
+  const list = document.getElementById("faq-list");
+
+  if (list) {
+    const items = Array.from(list.querySelectorAll<HTMLButtonElement>(".faq-trigger")).map(
+      (trigger) => ({
+        trigger,
+        panel: document.getElementById(trigger.getAttribute("aria-controls")!),
+        chevron: trigger.querySelector<SVGElement>(".faq-chevron"),
+      }),
+    );
+
+    const setOpen = (index: number, open: boolean) => {
+      const { trigger, panel, chevron } = items[index];
+      trigger.setAttribute("aria-expanded", String(open));
+      if (panel) panel.style.gridTemplateRows = open ? "1fr" : "0fr";
+      chevron?.classList.toggle("rotate-180", open);
+    };
+
+    // Set the initial chevron rotation to match the markup's open state.
+    items.forEach((item, i) =>
+      setOpen(i, item.trigger.getAttribute("aria-expanded") === "true"),
+    );
+
+    items.forEach(({ trigger }, i) => {
+      trigger.addEventListener("click", () => {
+        const willOpen = trigger.getAttribute("aria-expanded") !== "true";
+        // One panel at a time, like the reference design.
+        items.forEach((_, j) => setOpen(j, j === i && willOpen));
+      });
+    });
+  }
+</script>

@@ -1,0 +1,88 @@
+---
+import Icon from "./Icon.astro";
+import GradientCard from "./GradientCard.astro";
+
+interface Project {
+  title: string;
+  language: string;
+  body: string;
+  tags: string[];
+  repo?: string;
+  demo?: string;
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+/** Language dot colours, matching GitHub's convention. */
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
+  Python: "#3572a5",
+  Go: "#00add8",
+  Java: "#b07219",
+  Rust: "#dea584",
+};
+
+const dotColor = LANGUAGE_COLORS[project.language] ?? "#06b6d4";
+---
+
+<GradientCard as="article" class="flex" bodyClass="p-6 flex flex-col">
+  <div class="flex items-center justify-between gap-4 mb-3">
+    <h3 class="text-xl font-semibold">{project.title}</h3>
+    <span class="flex items-center gap-1.5 flex-shrink-0 text-xs text-gray-400 font-mono">
+      <span class="size-2.5 rounded-full" style={`background:${dotColor}`}></span>
+      {project.language}
+    </span>
+  </div>
+
+  <p class="text-gray-400 leading-relaxed mb-5">{project.body}</p>
+
+  <ul class="flex flex-wrap gap-2 mb-6">
+    {
+      project.tags.map((tag) => (
+        <li class="px-2.5 py-1 rounded font-mono text-xs border border-tech-purple/30 bg-tech-purple/10 text-gray-300">
+          {tag}
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- mt-auto pins the links to the bottom so cards in a row align -->
+  <div class="flex items-center gap-5 mt-auto pt-1 text-sm">
+    {
+      project.demo ? (
+        <a
+          href={project.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 font-medium text-tech-teal hover:underline"
+        >
+          <Icon name="box-arrow-up-right" />
+          Live Demo
+        </a>
+      ) : null
+    }
+    {
+      project.repo ? (
+        <a
+          href={project.repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 font-medium text-gray-300 hover:text-tech-teal transition-colors"
+        >
+          <Icon name="github" />
+          Repository
+        </a>
+      ) : null
+    }
+    {
+      !project.demo && !project.repo ? (
+        <span class="font-mono text-xs text-gray-500">Private / under NDA</span>
+      ) : null
+    }
+  </div>
+</GradientCard>

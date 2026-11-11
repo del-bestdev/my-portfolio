@@ -1,0 +1,30 @@
+---
+import Icon from "../components/Icon.astro";
+import GradientCard from "../components/GradientCard.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { expertise } from "../data/site";
+---
+
+<section id="expertise" class="py-20 relative overflow-hidden bg-tech-purple/10">
+  <div class="absolute inset-0 bg-circuit opacity-[0.07]" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+    <SectionHeading
+      lead="Engineering"
+      accent="Expertise"
+      subtitle="The areas I am brought in to own — and what each one actually means in practice."
+    />
+
+    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+      {
+        expertise.map((item) => (
+          <GradientCard as="li">
+            <Icon name={item.icon} class="text-tech-teal text-4xl mb-4" />
+            <h3 class="text-xl font-semibold mb-2">{item.title}</h3>
+            <p class="text-gray-400 leading-relaxed">{item.body}</p>
+          </GradientCard>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,214 @@
+---
+import Icon from "./Icon.astro";
+import { site, navLinks } from "../data/site";
+---
+
+<header
+  id="site-header"
+  class="fixed top-0 inset-x-0 z-40 border-b border-transparent transition-colors duration-300"
+>
+  <nav class="max-w-7xl mx-auto px-4 lg:px-8" aria-label="Main">
+    <div class="flex items-center justify-between py-4">
+      <a href="/#home" class="flex items-center gap-2 group" aria-label={`${site.name} — home`}>
+        <Icon name="braces" class="text-3xl text-tech-purple transition-transform duration-300 group-hover:rotate-12" />
+        <span class="font-mono font-bold tracking-tight text-lg">
+          {site.name.split(" ")[0]}<span class="text-tech-teal">.dev</span>
+        </span>
+      </a>
+
+      <!-- Desktop nav -->
+      <ul class="hidden lg:flex items-center gap-1">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                data-nav
+                class="nav-link px-3 py-2 rounded text-sm font-medium text-gray-300 hover:text-tech-teal transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="hidden lg:flex items-center gap-3">
+        {
+          site.resumeUrl && (
+            <a
+              href={site.resumeUrl}
+              class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-tech-teal/60 text-tech-teal hover:bg-tech-teal hover:text-tech-dark transition-all duration-300"
+            >
+              <Icon name="file-earmark-text" />
+              Resume
+            </a>
+          )
+        }
+        <a
+          href="/#contact"
+          class="flex items-center gap-2 px-4 py-2 bg-gradient-tech rounded-lg text-sm font-semibold neon-hover"
+        >
+          Contact
+        </a>
+      </div>
+
+      <!-- Mobile toggle -->
+      <button
+        type="button"
+        id="nav-toggle"
+        class="lg:hidden text-2xl p-2 -mr-2 text-gray-200 hover:text-tech-teal transition-colors"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span class="sr-only">Toggle navigation</span>
+        <Icon name="list" />
+        <Icon name="x-lg" class="hidden" />
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <div id="mobile-nav" class="hidden lg:hidden pb-4" >
+      <ul class="flex flex-col gap-1">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                data-nav
+                data-mobile-link
+                class="nav-link block px-3 py-2 rounded text-white hover:bg-tech-purple/20 hover:text-tech-teal transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li class="mt-3">
+          <a
+            href="/#contact"
+            data-mobile-link
+            class="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-tech rounded-lg font-medium"
+          >
+            Contact
+          </a>
+        </li>
+        {
+          site.resumeUrl && (
+            <li>
+              <a
+                href={site.resumeUrl}
+                data-mobile-link
+                class="flex items-center justify-center gap-2 px-3 py-2 mt-2 rounded-lg border border-tech-teal/60 text-tech-teal"
+              >
+                <Icon name="file-earmark-text" />
+                Resume
+              </a>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<style>
+  /* Solid backdrop once the page has scrolled, transparent over the hero. */
+  #site-header {
+    background-color: color-mix(in srgb, var(--color-tech-dark) 80%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  #site-header.scrolled {
+    background-color: var(--color-tech-dark);
+    border-bottom-color: color-mix(in srgb, var(--color-tech-teal) 20%, transparent);
+  }
+  /* Scroll-spy state, set by the script below. */
+  .nav-link[aria-current="true"] {
+    color: var(--color-tech-teal);
+    background-color: color-mix(in srgb, var(--color-tech-purple) 18%, transparent);
+  }
+</style>
+
+<script>
+  // --- Mobile menu -------------------------------------------------------
+  const toggle = document.getElementById("nav-toggle");
+  const menu = document.getElementById("mobile-nav");
+
+  if (toggle && menu) {
+    const [openIcon, closeIcon] = Array.from(toggle.querySelectorAll("svg"));
+
+    const setOpen = (open: boolean) => {
+      menu.classList.toggle("hidden", !open);
+      toggle.setAttribute("aria-expanded", String(open));
+      openIcon?.classList.toggle("hidden", open);
+      closeIcon?.classList.toggle("hidden", !open);
+    };
+
+    toggle.addEventListener("click", () =>
+      setOpen(toggle.getAttribute("aria-expanded") !== "true"),
+    );
+
+    // Close after tapping a link, and on Escape.
+    menu.querySelectorAll("[data-mobile-link]").forEach((link) =>
+      link.addEventListener("click", () => setOpen(false)),
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+    // A resize up to desktop should not leave the panel stuck open.
+    window.matchMedia("(min-width: 1024px)").addEventListener("change", (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+
+  // --- Header background on scroll --------------------------------------
+  const header = document.getElementById("site-header");
+  const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 24);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // --- Scroll-spy: highlight the nav link for the section in view -------
+  const navAnchors = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("a[data-nav]"),
+  );
+
+  // Only spy on links that point at a section on THIS page.
+  const watched = navAnchors
+    .map((a) => {
+      const hash = a.getAttribute("href")?.split("#")[1];
+      const section = hash ? document.getElementById(hash) : null;
+      return section ? { anchor: a, section } : null;
+    })
+    .filter((x): x is { anchor: HTMLAnchorElement; section: HTMLElement } => x !== null);
+
+  if (watched.length) {
+    const visible = new Set<string>();
+
+    const highlight = () => {
+      // Choose the topmost section currently intersecting the viewport.
+      const active = watched.find(({ section }) => visible.has(section.id));
+      navAnchors.forEach((a) => a.removeAttribute("aria-current"));
+      if (active) {
+        const id = active.section.id;
+        navAnchors
+          .filter((a) => a.getAttribute("href")?.endsWith(`#${id}`))
+          .forEach((a) => a.setAttribute("aria-current", "true"));
+      }
+    };
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        highlight();
+      },
+      // Bias toward the upper half of the viewport so the highlight changes
+      // roughly when a section's heading reaches the top.
+      { rootMargin: "-20% 0px -60% 0px" },
+    );
+
+    watched.forEach(({ section }) => spy.observe(section));
+  }
+</script>
